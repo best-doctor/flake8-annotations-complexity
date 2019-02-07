@@ -1,7 +1,6 @@
 import ast
 import os
 
-import sys; print(sys.path)
 from flake8_annotations_complexity.checker import AnnotationsComplexityChecker
 
 
