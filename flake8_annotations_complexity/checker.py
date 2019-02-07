@@ -16,6 +16,7 @@ class AnnotationsComplexityChecker:
     def __init__(self, tree, filename: str):
         self.filename = filename
         self.tree = tree
+        self.max_annotations_complexity = self.default_max_annotations_complexity
 
     def run(self) -> Generator[Tuple[int, int, str, type], None, None]:
         too_difficult_annotations = validate_annotations_in_ast_node(

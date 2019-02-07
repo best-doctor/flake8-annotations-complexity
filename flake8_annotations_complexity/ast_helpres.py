@@ -4,7 +4,7 @@ from typing import List, Tuple, Any
 
 def get_annotation_compexity(annotation_node) -> int:
     if isinstance(annotation_node, ast.Str):
-        annotation_node = ast.parse(str(annotation_node.s))
+        annotation_node = ast.parse(annotation_node.s).body[0].value
     if isinstance(annotation_node, ast.Subscript):
         return 1 + get_annotation_compexity(annotation_node.slice.value)  # type: ignore
     if isinstance(annotation_node, ast.Tuple):
@@ -12,7 +12,7 @@ def get_annotation_compexity(annotation_node) -> int:
     return 1
 
 
-def validate_annotations_in_ast_node(node, max_annotations_complexity) -> List[Tuple[str, Any, int]]:
+def validate_annotations_in_ast_node(node, max_annotations_complexity) -> List[Tuple[Any, int]]:
     too_difficult_annotations = []
     func_defs = [
         f for f in ast.walk(node)
