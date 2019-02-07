@@ -4,7 +4,7 @@ from typing import List, Tuple, Any
 
 def get_annotation_compexity(annotation_node) -> int:
     if isinstance(annotation_node, ast.Str):
-        annotation_node = ast.parse(annotation_node.s).body[0].value
+        annotation_node = ast.parse(annotation_node.s).body[0].value  # type: ignore
     if isinstance(annotation_node, ast.Subscript):
         return 1 + get_annotation_compexity(annotation_node.slice.value)  # type: ignore
     if isinstance(annotation_node, ast.Tuple):
