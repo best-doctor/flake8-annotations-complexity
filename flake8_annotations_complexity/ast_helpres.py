@@ -18,15 +18,17 @@ def validate_annotations_in_ast_node(node, max_annotations_complexity) -> List[T
         f for f in ast.walk(node)
         if isinstance(f, ast.FunctionDef)
     ]
+    annotations: List[ast.AST] = []
     for funcdef in func_defs:
-        annotations = list(filter(None, [a.annotation for a in funcdef.args.args]))
+        annotations += list(filter(None, [a.annotation for a in funcdef.args.args]))
         if funcdef.returns:
             annotations.append(funcdef.returns)
-        for annotation in annotations:
-            complexity = get_annotation_compexity(annotation)
-            if complexity > max_annotations_complexity:
-                too_difficult_annotations.append((
-                    annotation,
-                    complexity,
-                ))
+    annotations += [a.annotation for a in ast.walk(node) if isinstance(a, ast.AnnAssign) and a.annotation]
+    for annotation in annotations:
+        complexity = get_annotation_compexity(annotation)
+        if complexity > max_annotations_complexity:
+            too_difficult_annotations.append((
+                annotation,
+                complexity,
+            ))
     return too_difficult_annotations

@@ -25,3 +25,8 @@ def test_ok_for_string_annotations_file():
     assert len(errors) == 1
     errors = run_validator_for_test_file('string_annotations.py', max_annotations_complexity=1)
     assert len(errors) == 2
+
+
+def test_validates_annotations_complexity_for_annassigments():
+    errors = run_validator_for_test_file('var_annotation.py')
+    assert len(errors) == 1
