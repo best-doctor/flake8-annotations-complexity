@@ -13,7 +13,7 @@ wrong code decomposition or improper data structure choice.
 They are also hard to read and make code look java-like.
 
 Annotation complexity is maximum annotation nesting level.
-So `List[int]` complexity is 2 and `Tuple[List[Optinal[str]], int]` is 4.
+So `List[int]` complexity is 2 and `Tuple[List[Optional[str]], int]` is 4.
 
 Default max annotation complexity is 3 and can be configured
 via `--max-annotations-complexity` option.
