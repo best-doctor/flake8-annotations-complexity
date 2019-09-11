@@ -8,7 +8,7 @@ def get_annotation_compexity(annotation_node) -> int:
     if isinstance(annotation_node, ast.Subscript):
         return 1 + get_annotation_compexity(annotation_node.slice.value)  # type: ignore
     if isinstance(annotation_node, ast.Tuple):
-        return max(get_annotation_compexity(n) for n in annotation_node.elts, default=1)
+        return max((get_annotation_compexity(n) for n in annotation_node.elts), default=1)
     return 1
 
 
