@@ -36,4 +36,6 @@ def test_ok_for_empty_tuple():
     errors = run_validator_for_test_file('empty_tuple.py')
     assert not errors
     errors = run_validator_for_test_file('empty_tuple.py', max_annotations_complexity=1)
+    assert len(errors) == 1
+    errors = run_validator_for_test_file('empty_tuple.py', max_annotations_complexity=2)
     assert not errors
