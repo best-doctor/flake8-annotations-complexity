@@ -30,3 +30,10 @@ def test_ok_for_string_annotations_file():
 def test_validates_annotations_complexity_for_annassigments():
     errors = run_validator_for_test_file('var_annotation.py')
     assert len(errors) == 1
+
+
+def test_ok_for_empty_tuple():
+    errors = run_validator_for_test_file('empty_tuple.py')
+    assert not errors
+    errors = run_validator_for_test_file('empty_tuple.py', max_annotations_complexity=1)
+    assert not errors
