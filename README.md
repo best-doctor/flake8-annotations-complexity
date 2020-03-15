@@ -4,6 +4,7 @@
 [![Build Status](https://travis-ci.org/best-doctor/flake8-annotations-complexity.svg?branch=master)](https://travis-ci.org/best-doctor/flake8-annotations-complexity)
 [![Maintainability](https://api.codeclimate.com/v1/badges/c81ff76755380663b7d3/maintainability)](https://codeclimate.com/github/best-doctor/flake8-annotations-complexity/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/c81ff76755380663b7d3/test_coverage)](https://codeclimate.com/github/best-doctor/flake8-annotations-complexity/test_coverage)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations-complexity)
 
 
 An extension for flake8 to report on too complex type annotations.
