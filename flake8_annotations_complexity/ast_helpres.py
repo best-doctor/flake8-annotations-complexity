@@ -23,7 +23,7 @@ def validate_annotations_in_ast_node(node, max_annotations_complexity) -> List[T
     ]
     annotations: List[ast.AST] = []
     for funcdef in func_defs:
-        annotations += list(filter(None, [a.annotation for a in funcdef.args.args]))
+        annotations += list(filter(None, (a.annotation for a in funcdef.args.args)))
         if funcdef.returns:
             annotations.append(funcdef.returns)
     annotations += [a.annotation for a in ast.walk(node) if isinstance(a, ast.AnnAssign) and a.annotation]
