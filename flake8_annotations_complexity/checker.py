@@ -19,6 +19,19 @@ class AnnotationsComplexityChecker:
         if AnnotationsComplexityChecker.max_annotations_complexity is None:
             AnnotationsComplexityChecker.max_annotations_complexity = self.default_max_annotations_complexity
 
+    @classmethod
+    def add_options(cls, parser) -> None:
+        parser.add_option(
+            '--max-annotations-complexity',
+            type=int,
+            parse_from_config=True,
+            default=cls.default_max_annotations_complexity,
+        )
+
+    @classmethod
+    def parse_options(cls, options) -> None:
+        cls.max_annotations_complexity = int(options.max_annotations_complexity)
+
     def run(self) -> Generator[Tuple[int, int, str, type], None, None]:
         too_difficult_annotations = validate_annotations_in_ast_node(
             self.tree,
@@ -32,16 +45,3 @@ class AnnotationsComplexityChecker:
                 self._error_message_template.format(complexity, self.max_annotations_complexity),
                 type(self),
             )
-
-    @classmethod
-    def add_options(cls, parser) -> None:
-        parser.add_option(
-            '--max-annotations-complexity',
-            type=int,
-            parse_from_config=True,
-            default=cls.default_max_annotations_complexity,
-        )
-
-    @classmethod
-    def parse_options(cls, options) -> None:
-        cls.max_annotations_complexity = int(options.max_annotations_complexity)
