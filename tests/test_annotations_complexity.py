@@ -41,6 +41,15 @@ def test_ok_for_empty_tuple():
     assert not errors
 
 
+def test_ok_for_empty_string():
+    errors = run_validator_for_test_file('empty_string.py')
+    assert not errors
+    errors = run_validator_for_test_file('empty_string.py', max_annotations_complexity=1)
+    assert len(errors) == 1
+    errors = run_validator_for_test_file('empty_string.py', max_annotations_complexity=2)
+    assert not errors
+
+
 def test_not_raises_errors_for_weird_annotations():
     errors = run_validator_for_test_file('weird_annotations.py')
     assert not errors
