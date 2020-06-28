@@ -6,7 +6,7 @@ def get_annotation_complexity(annotation_node, default_complexity: int = 1) -> i
     if isinstance(annotation_node, ast.Str):
         try:
             annotation_node = ast.parse(annotation_node.s).body[0].value  # type: ignore
-        except SyntaxError:
+        except (SyntaxError, IndexError):
             return default_complexity
     if isinstance(annotation_node, ast.Subscript):
         return 1 + get_annotation_complexity(annotation_node.slice.value)  # type: ignore
