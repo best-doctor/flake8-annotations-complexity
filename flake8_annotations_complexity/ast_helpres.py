@@ -1,4 +1,5 @@
 import ast
+import sys
 from typing import List, Tuple, Any
 
 
@@ -9,6 +10,8 @@ def get_annotation_complexity(annotation_node, default_complexity: int = 1) -> i
         except (SyntaxError, IndexError):
             return default_complexity
     if isinstance(annotation_node, ast.Subscript):
+        if sys.version_info >= (3, 9):
+            return 1 + get_annotation_complexity(annotation_node.slice)
         return 1 + get_annotation_complexity(annotation_node.slice.value)  # type: ignore
     if isinstance(annotation_node, ast.Tuple):
         return max((get_annotation_complexity(n) for n in annotation_node.elts), default=1)
