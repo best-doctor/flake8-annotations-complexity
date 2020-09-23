@@ -67,3 +67,8 @@ def test_pep_585_compliance():
     assert len(errors) == 11
     errors = run_validator_for_test_file('pep_585.py', max_annotations_complexity=2)
     assert len(errors) == 2
+
+
+def test_validates_too_long_annotations():
+    errors = run_validator_for_test_file('too_long_annotation.py')
+    assert len(errors) == 4

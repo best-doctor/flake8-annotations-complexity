@@ -18,7 +18,25 @@ def get_annotation_complexity(annotation_node, default_complexity: int = 1) -> i
     return default_complexity
 
 
-def validate_annotations_in_ast_node(node, max_annotations_complexity) -> List[Tuple[Any, int]]:
+def get_annotation_len(annotation_node) -> int:
+    if isinstance(annotation_node, ast.Str):
+        try:
+            annotation_node = ast.parse(annotation_node.s).body[0].value  # type: ignore
+        except (SyntaxError, IndexError):
+            return 0
+    if isinstance(annotation_node, ast.Subscript):
+        try:
+            return len(annotation_node.slice.value.elts)  # type: ignore
+        except AttributeError:
+            return 0
+    return 0
+
+
+def validate_annotations_in_ast_node(
+    node,
+    max_annotations_complexity,
+    max_annotations_len,
+) -> List[Tuple[Any, str]]:
     too_difficult_annotations = []
     func_defs = [
         f for f in ast.walk(node)
@@ -35,6 +53,12 @@ def validate_annotations_in_ast_node(node, max_annotations_complexity) -> List[T
         if complexity > max_annotations_complexity:
             too_difficult_annotations.append((
                 annotation,
-                complexity,
+                'TAE002 too complex annotation ({0} > {1})'.format(complexity, max_annotations_complexity),
+            ))
+        annotation_len = get_annotation_len(annotation)
+        if annotation_len > 7:
+            too_difficult_annotations.append((
+                annotation,
+                'TAE003 too long annotation ({0} > {1})'.format(annotation_len, max_annotations_len),
             ))
     return too_difficult_annotations
