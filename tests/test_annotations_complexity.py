@@ -1,3 +1,7 @@
+import sys
+
+import pytest
+
 from conftest import run_validator_for_test_file
 
 
@@ -53,3 +57,13 @@ def test_ok_for_empty_string():
     assert len(errors) == 2
     errors = run_validator_for_test_file('empty_string.py', max_annotations_complexity=2)
     assert not errors
+
+
+@pytest.mark.skipif(sys.version_info < (3, 7), reason="requires Python 3.7+")
+def test_pep_585_compliance():
+    errors = run_validator_for_test_file('pep_585.py')
+    assert not errors
+    errors = run_validator_for_test_file('pep_585.py', max_annotations_complexity=1)
+    assert len(errors) == 11
+    errors = run_validator_for_test_file('pep_585.py', max_annotations_complexity=2)
+    assert len(errors) == 2
