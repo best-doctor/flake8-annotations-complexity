@@ -26,6 +26,8 @@ def get_annotation_len(annotation_node) -> int:
             return 0
     if isinstance(annotation_node, ast.Subscript):
         try:
+            if sys.version_info >= (3, 9):
+                return len(annotation_node.slice.elts)  # type: ignore
             return len(annotation_node.slice.value.elts)  # type: ignore
         except AttributeError:
             return 0
