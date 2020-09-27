@@ -41,7 +41,7 @@ $ flake8 --max-annotations-complexity=1 test.py
 test.py:4:14: TAE002 too complex annotation (2 > 1)
 ```
 
-Tested on Python 3.5.0 and flake8 3.7.4.
+Tested on Python 3.6, 3.7, 3.8 and flake8 3.7.8.
 
 ## Contributing
 
