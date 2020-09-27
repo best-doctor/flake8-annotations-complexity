@@ -1,10 +1,10 @@
 from typing import Generator, Tuple
 
-from flake8_annotations_complexity import __version__ as version
-from flake8_annotations_complexity.ast_helpres import validate_annotations_in_ast_node
+from flake8_annotations_complexity import __version__ as version, validators
+from flake8_annotations_complexity.ast_helpres import get_annotation_nodes
 
 
-class AnnotationsComplexityChecker:
+class AnnotationsChecker:
     name = 'flake8-annotations-complexity'
     version = version
 
@@ -17,10 +17,11 @@ class AnnotationsComplexityChecker:
     def __init__(self, tree, filename: str):
         self.filename = filename
         self.tree = tree
-        if AnnotationsComplexityChecker.max_annotations_complexity is None:
-            AnnotationsComplexityChecker.max_annotations_complexity = self.default_max_annotations_complexity
-        if AnnotationsComplexityChecker.max_annotations_len is None:
-            AnnotationsComplexityChecker.max_annotations_len = self.default_max_annotations_len
+
+        if AnnotationsChecker.max_annotations_complexity is None:
+            AnnotationsChecker.max_annotations_complexity = self.default_max_annotations_complexity
+        if AnnotationsChecker.max_annotations_len is None:
+            AnnotationsChecker.max_annotations_len = self.default_max_annotations_len
 
     @classmethod
     def add_options(cls, parser) -> None:
@@ -40,15 +41,24 @@ class AnnotationsComplexityChecker:
     @classmethod
     def parse_options(cls, options) -> None:
         cls.max_annotations_complexity = int(options.max_annotations_complexity)
+        cls.max_annotations_len = int(options.max_annotations_len)
 
     def run(self) -> Generator[Tuple[int, int, str, type], None, None]:
-        too_difficult_annotations = validate_annotations_in_ast_node(
-            self.tree,
-            self.max_annotations_complexity,
-            self.max_annotations_len,
+        init_validators: Tuple[validators.Validator, ...] = (
+            validators.AnnotationComplexity(self.max_annotations_complexity),  # type: ignore
+            validators.AnnotationLength(self.max_annotations_len),  # type: ignore
         )
 
-        for annotation, error_msg in too_difficult_annotations:
+        bad_annotations = []
+        annotations = get_annotation_nodes(self.tree)
+
+        for annotation in annotations:
+            for validator in init_validators:
+                msg = validator.validate(annotation)
+                if msg:
+                    bad_annotations.append((annotation, msg))
+
+        for annotation, error_msg in bad_annotations:
             yield (
                 annotation.lineno,
                 annotation.col_offset,

@@ -46,7 +46,7 @@ setup(
     install_requires=['setuptools'],
     entry_points={
         'flake8.extension': [
-            'TAE002 = flake8_annotations_complexity.checker:AnnotationsComplexityChecker',
+            'TAE002 = flake8_annotations_complexity.checker:AnnotationsChecker',
         ],
     },
     url='https://github.com/best-doctor/flake8-annotations-complexity',

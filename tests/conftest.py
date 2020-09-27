@@ -1,7 +1,7 @@
 import ast
 import os
 
-from flake8_annotations_complexity.checker import AnnotationsComplexityChecker
+from flake8_annotations_complexity.checker import AnnotationsChecker
 
 
 def run_validator_for_test_file(filename, max_annotations_complexity=None):
@@ -13,7 +13,7 @@ def run_validator_for_test_file(filename, max_annotations_complexity=None):
     with open(test_file_path, 'r') as file_handler:
         raw_content = file_handler.read()
     tree = ast.parse(raw_content)
-    checker = AnnotationsComplexityChecker(tree=tree, filename=filename)
+    checker = AnnotationsChecker(tree=tree, filename=filename)
     if max_annotations_complexity:
         checker.max_annotations_complexity = max_annotations_complexity
 
