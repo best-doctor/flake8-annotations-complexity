@@ -26,12 +26,12 @@ class AnnotationComplexity(Validator):
         self.max_complexity: int = max_complexity
 
     def validate(self, annotation_node) -> Optional[str]:
-        complexity = self.get_annotation_complexity(annotation_node)
+        complexity = self._get_annotation_complexity(annotation_node)
         if complexity <= self.max_complexity:
             return None
         return self.error_template.format(complexity, self.max_complexity)
 
-    def get_annotation_complexity(self, annotation_node, default_complexity: int = 1) -> int:
+    def _get_annotation_complexity(self, annotation_node, default_complexity: int = 1) -> int:
         if isinstance(annotation_node, ast.Str):
             try:
                 annotation_node = ast.parse(annotation_node.s).body[0].value  # type: ignore
@@ -39,10 +39,10 @@ class AnnotationComplexity(Validator):
                 return default_complexity
         if isinstance(annotation_node, ast.Subscript):
             if sys.version_info >= (3, 9):
-                return 1 + self.get_annotation_complexity(annotation_node.slice)
-            return 1 + self.get_annotation_complexity(annotation_node.slice.value)  # type: ignore
+                return 1 + self._get_annotation_complexity(annotation_node.slice)
+            return 1 + self._get_annotation_complexity(annotation_node.slice.value)  # type: ignore
         if isinstance(annotation_node, ast.Tuple):
-            return max((self.get_annotation_complexity(n) for n in annotation_node.elts), default=1)
+            return max((self._get_annotation_complexity(n) for n in annotation_node.elts), default=1)
         return default_complexity
 
 
@@ -55,12 +55,12 @@ class AnnotationLength(Validator):
         self.max_length = max_length
 
     def validate(self, annotation_node) -> Optional[str]:
-        annotation_length: int = self.get_annotation_length(annotation_node)
+        annotation_length: int = self._get_annotation_length(annotation_node)
         if annotation_length < self.max_length:
             return None
         return self.error_template.format(annotation_length, self.max_length)
 
-    def get_annotation_length(self, annotation_node) -> int:
+    def _get_annotation_length(self, annotation_node) -> int:
         default_len: int = 0
         if isinstance(annotation_node, ast.Str):
             try:
@@ -75,3 +75,26 @@ class AnnotationLength(Validator):
             except AttributeError:
                 return default_len
         return default_len
+
+
+class AnnotationOldStyle(Validator):
+    """Validator for check old-style annotations."""
+
+    error_template: str = 'TAE004 string annotation not allow'
+
+    def validate(self, annotation_node) -> Optional[str]:
+        if self._find_str(annotation_node):
+            return self.error_template
+        return None
+
+    def _find_str(self, annotation_node) -> bool:
+        if isinstance(annotation_node, ast.Str):
+            return True
+        if isinstance(annotation_node, ast.Subscript):
+            if sys.version_info >= (3, 9):
+                return self._find_str(annotation_node.slice)
+            return self._find_str(annotation_node.slice.value)  # type: ignore
+        if isinstance(annotation_node, ast.Tuple):
+            for node in annotation_node.elts:
+                return self._find_str(node)
+        return False

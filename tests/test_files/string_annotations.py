@@ -1,9 +1,4 @@
-from typing import List, Dict, Optional, Tuple
+from typing import List
 
-
-def foo() -> 'List[int]':
-    return [1]
-
-
-def bar(arg1: 'str', arg2: 'Tuple[List[int], Optional[Dict[str, int]]]') -> 'int':
-    return 1
+foo: List['str'] = []
+bar: 'List[str]' = []
