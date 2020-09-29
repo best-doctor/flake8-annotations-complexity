@@ -44,7 +44,7 @@ class AnnotationsChecker:
         )
         parser.add_option(
             '--enable-old-style-annotations',
-            type=bool,
+            action='store_true',
             parse_from_config=True,
             default=cls.default_enable_old_style,
         )
