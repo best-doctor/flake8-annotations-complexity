@@ -1,7 +1,7 @@
 from typing import Generator, Tuple
 
 from flake8_annotations_complexity import __version__ as version
-from flake8_annotations_complexity.ast_helpres import validate_annotations_in_ast_node
+from flake8_annotations_complexity.ast_helpers import validate_annotations_in_ast_node
 
 
 class AnnotationsComplexityChecker:
