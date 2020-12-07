@@ -3,8 +3,9 @@ python:
   - "3.6"
   - "3.7"
   - "3.8"
-  - "3.9-dev"
+  - "3.9"
 install:
+  - gem install chef-utils -v 16.6.14  # Latest version that supports ruby version is 2.5.3.105 which is used by Travis.
   - gem install mdl
   - pip install -r requirements_dev.txt
   - pip install -e .
