@@ -1,6 +1,6 @@
 # flake8-annotations-complexity
 
-[![Build Status](https://travis-ci.org/best-doctor/flake8-annotations-complexity.svg?branch=master)](https://travis-ci.org/best-doctor/flake8-annotations-complexity)
+[![Build Status](https://github.com/best-doctor/flake8-annotations-complexity/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/best-doctor/flake8-annotations-complexity/actions/workflows/build.yml)
 [![Maintainability](https://api.codeclimate.com/v1/badges/c81ff76755380663b7d3/maintainability)](https://codeclimate.com/github/best-doctor/flake8-annotations-complexity/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/c81ff76755380663b7d3/test_coverage)](https://codeclimate.com/github/best-doctor/flake8-annotations-complexity/test_coverage)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/flake8-annotations-complexity)
@@ -41,8 +41,6 @@ $ flake8 --max-annotations-complexity=1 test.py
 test.py:4:14: TAE002 too complex annotation (2 > 1)
 ```
 
-Tested on Python 3.6, 3.7, 3.8, 3.9 and flake8 3.7.9.
-
 ## Contributing
 
 We would love you to contribute to our project. It's simple:
@@ -56,7 +54,7 @@ We would love you to contribute to our project. It's simple:
 Here are useful tips:
 
 - You can run all checks and tests with `make check`.
-  Please do it before TravisCI does.
+  Please do it before CI does.
 - We use [BestDoctor python styleguide](https://github.com/best-doctor/guides/blob/master/guides/en/python_styleguide.md).
 - We respect [Django CoC](https://www.djangoproject.com/conduct/).
   Make soft, not bullshit.
