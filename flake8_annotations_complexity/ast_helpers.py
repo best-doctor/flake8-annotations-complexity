@@ -62,7 +62,7 @@ def validate_annotations_in_ast_node(
                 'TAE002 too complex annotation ({0} > {1})'.format(complexity, max_annotations_complexity),
             ))
         annotation_len = get_annotation_len(annotation)
-        if annotation_len > 7:
+        if annotation_len > max_annotations_len:
             too_difficult_annotations.append((
                 annotation,
                 'TAE003 too long annotation ({0} > {1})'.format(annotation_len, max_annotations_len),
