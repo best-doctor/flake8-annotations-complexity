@@ -20,8 +20,10 @@ def test_ok_for_unannotated_file():
 def test_ok_for_dynamic_annotations_file():
     errors = run_validator_for_test_file('dynamic_annotations.py')
     assert len(errors) == 1
+    errors = run_validator_for_test_file('dynamic_annotations.py', max_annotations_complexity=2)
+    assert len(errors) == 1
     errors = run_validator_for_test_file('dynamic_annotations.py', max_annotations_complexity=1)
-    assert len(errors) == 2
+    assert len(errors) == 3
 
 
 def test_ok_for_string_annotations_file():
