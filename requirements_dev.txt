@@ -22,10 +22,10 @@ flake8-typing-imports==1.9.0
 flake8-variables-names==0.0.5
 mypy==0.921
 mypy-extensions==0.4.3
-safety==2.3.1
+safety==2.3.4
 dlint==0.12.0
 flake8-if-statements==0.1.0
 flake8-functions==0.0.7
 flake8-annotations-coverage==0.0.6
 flake8-expression-complexity==0.0.10
-packaging==21.3
+packaging==22.0
