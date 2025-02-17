@@ -1,41 +1,57 @@
 import ast
-import sys
+from logging import getLogger
 from typing import List, Tuple, Any
 
+logger = getLogger(__name__)
 
-def get_annotation_complexity(annotation_node, default_complexity: int = 1) -> int:
+
+def get_annotation_complexity(annotation_node) -> int:
+    """
+    Recursively counts complexity of annotation nodes.
+
+    When annotations are written as strings,
+    we additionally parse them to ``ast`` nodes.
+    """
     if isinstance(annotation_node, ast.Str):
+        # try to parse string-wrapped annotations
         try:
             annotation_node = ast.parse(annotation_node.s).body[0].value  # type: ignore
-        except (SyntaxError, IndexError):
-            return default_complexity
-    complexity = default_complexity
+        except Exception as exc:
+            logger.debug(f'Cannot parse string-wrapped annotation: {exc!r}')
+            return 1
+
     if isinstance(annotation_node, ast.Subscript):
-        if sys.version_info >= (3, 9):
-            complexity = 1 + get_annotation_complexity(annotation_node.slice)
-        else:
-            complexity = 1 + get_annotation_complexity(annotation_node.slice.value)  # type: ignore
-    if isinstance(annotation_node, ast.Tuple):
-        complexity = max((get_annotation_complexity(n) for n in annotation_node.elts), default=1)
-    return complexity
+        return 1 + get_annotation_complexity(annotation_node.slice)
+
+    if isinstance(annotation_node, (ast.Tuple, ast.List)):
+        return max((get_annotation_complexity(n) for n in annotation_node.elts), default=1)
+
+    return 1
 
 
 def get_annotation_len(annotation_node) -> int:
-    annotation_len = 0
+    """
+    Recursively counts length of annotation nodes.
+
+    When annotations are written as strings,
+    we additionally parse them to ``ast`` nodes.
+    """
     if isinstance(annotation_node, ast.Str):
+        # try to parse string-wrapped annotations
         try:
             annotation_node = ast.parse(annotation_node.s).body[0].value  # type: ignore
-        except (SyntaxError, IndexError):
-            return annotation_len
+        except Exception as exc:
+            logger.debug(f'Cannot parse string-wrapped annotation: {exc!r}')
+            return 0
+
     if isinstance(annotation_node, ast.Subscript):
         try:
-            if sys.version_info >= (3, 9):
-                annotation_len = len(annotation_node.slice.elts)  # type: ignore
-            else:
-                annotation_len = len(annotation_node.slice.value.elts)  # type: ignore
+            return len(annotation_node.slice.elts)  # type: ignore
         except AttributeError:
-            annotation_len = 0
-    return annotation_len
+            logger.debug('Attribute error on annotation length counting')
+            return 0
+
+    return 0
 
 
 def validate_annotations_in_ast_node(
