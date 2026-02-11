@@ -12,10 +12,10 @@ def get_annotation_complexity(annotation_node) -> int:
     When annotations are written as strings,
     we additionally parse them to ``ast`` nodes.
     """
-    if isinstance(annotation_node, ast.Str):
+    if isinstance(annotation_node, ast.Constant) and isinstance(annotation_node.value, str):
         # try to parse string-wrapped annotations
         try:
-            annotation_node = ast.parse(annotation_node.s).body[0].value  # type: ignore
+            annotation_node = ast.parse(annotation_node.value).body[0].value  # type: ignore
         except Exception as exc:
             logger.debug(f'Cannot parse string-wrapped annotation: {exc!r}')
             return 1
@@ -36,10 +36,10 @@ def get_annotation_len(annotation_node) -> int:
     When annotations are written as strings,
     we additionally parse them to ``ast`` nodes.
     """
-    if isinstance(annotation_node, ast.Str):
+    if isinstance(annotation_node, ast.Constant) and isinstance(annotation_node.value, str):
         # try to parse string-wrapped annotations
         try:
-            annotation_node = ast.parse(annotation_node.s).body[0].value  # type: ignore
+            annotation_node = ast.parse(annotation_node.value).body[0].value  # type: ignore
         except Exception as exc:
             logger.debug(f'Cannot parse string-wrapped annotation: {exc!r}')
             return 0
