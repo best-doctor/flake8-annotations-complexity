@@ -1,0 +1,86 @@
+tests/test_files/async_arg_kinds.py
+  s_d7e511d698ea27::t_5832dcf76b689d 1-12
+tests/test_files/async_nested.py
+  s_d7e511d698ea27::t_fcec55f8904695 1-17
+pyproject.toml
+  s_d7e511d698ea27::t_f6ab945e26d00e 76,79-83,85
+  s_d7e511d698ea27::t_917f00ca251452 77-78
+  s_d7e511d698ea27::t_ea9157fa286bf2 1-41,43-75,84,86-110
+  s_d7e511d698ea27::t_7950bac2a21811 42
+tests/test_files/async_too_long_annotation.py
+  s_d7e511d698ea27::t_8548d739fbbff2 1-5
+.markdownlint-cli2.jsonc
+  s_d7e511d698ea27::t_6b80c991badb58 1-8
+tests/conftest.py
+  s_d7e511d698ea27::t_954e8f6164aaed 3,9
+  s_d7e511d698ea27::t_a7db744c185b1a 2
+  s_d7e511d698ea27::t_96532a20788dea 5,10-33,35-38,40-41
+  s_d7e511d698ea27::t_a154d14ee146af 34
+  s_d7e511d698ea27::t_9e4df11b07d51b 4
+README.md
+  s_d7e511d698ea27::t_479da008281e5c 16-29
+  s_d7e511d698ea27::t_1d9c8cf44db005 68-70
+  s_d7e511d698ea27::t_85093d06c873ff 44
+tests/test_files/async_string_annotations.py
+  s_d7e511d698ea27::t_b57310d186327b 1-9
+tests/test_files/all_arg_kinds.py
+  s_d7e511d698ea27::t_1f118c1151737f 1-12
+flake8_annotations_complexity/__init__.py
+  s_d7e511d698ea27::t_5ad3d85af2106c 1
+flake8_annotations_complexity/ast_helpers.py
+  s_d7e511d698ea27::t_bd07488ac8293e 9-11,13,16
+  s_d7e511d698ea27::t_3b52bf21b9cfb3 59-61
+  s_d7e511d698ea27::t_ce914aca0858e9 2,4
+  s_d7e511d698ea27::t_d25a01bb87a942 12,14-15,17-18,22-26,47,62,67-82,84-87,89-95
+  s_d7e511d698ea27::t_dc59fe2a58107d 19-21
+  s_d7e511d698ea27::t_e590b6d791d583 54-57
+  s_d7e511d698ea27::t_b86ced73e0412d 33-36
+  s_d7e511d698ea27::t_85093d06c873ff 99-104,107-112
+tests/test_files/async_annotations.py
+  s_d7e511d698ea27::t_6b377835824fda 1-9
+.pre-commit-config.yaml
+  s_d7e511d698ea27::t_0812f6755d77ef 1-42
+tests/test_unit/test_ast_helpers.py
+  s_d7e511d698ea27::t_9b3d379bd0e189 31-33,53-55,76-78,112-114
+  s_d7e511d698ea27::t_6105d0918859c3 94-95,104-105
+  s_d7e511d698ea27::t_c1e22567bee133 1,5-30,34-52,56-75,79-93,96-103,106-111,115-120
+tests/test_unit/test_checker.py
+  s_d7e511d698ea27::t_10d53e675f7233 1-38,42-81,85-107,111-142,146-158,162-177,181-188,192-201,205-217,221-227
+  s_d7e511d698ea27::t_9b3d379bd0e189 39-41,82-84,108-110,143-145,159-161,178-180,189-191,202-204,218-220
+.github/workflows/publish.yml
+  s_d7e511d698ea27::t_c2d4b29746670a 16,18,41,43
+  s_d7e511d698ea27::t_3af3231bd20306 30
+  s_d7e511d698ea27::t_8cf2e94bec1467 9,12,14,17,19-29,31,34,36-37,39,42,44-47
+.github/workflows/build.yml
+  s_d7e511d698ea27::t_7e9bdab9fd1e1a 5-11,14-16,18,20-35,37-40,43,45,48,52,54-55
+  s_d7e511d698ea27::t_c2d4b29746670a 17,19,36,47,49
+  s_d7e511d698ea27::t_0ecc6ddc2e10f3 56
+Makefile
+  s_d7e511d698ea27::t_1acca1af153b3b 1-5,7,10,13,16-22,25,27-28,30
+.github/ISSUE_TEMPLATE/bug_report.md
+  s_d7e511d698ea27::t_d0c6d6f4c0394e 29-31,34-38
+  s_d7e511d698ea27::t_687328123ac3eb 15
+  s_d7e511d698ea27::t_4e82ae5fc1914d 28
+flake8_annotations_complexity/checker.py
+  s_d7e511d698ea27::t_4ef34621137efd 1,20,25,40,42,44
+  s_d7e511d698ea27::t_be44dd3ac9be45 2-3,16-18
+  s_d7e511d698ea27::t_4317a83cc82569 19
+uv.lock
+  s_d7e511d698ea27::t_621577b531b6cd 1-1315
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "d547a1b19ba5e8a8d87f7c202a4276e4afe8f6cd",
+  "prompts": {},
+  "sessions": {
+    "s_d7e511d698ea27": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0fb8240f-db23-4ec6-a65d-f47c946a5927",
+        "model": "claude-opus-5"
+      },
+      "human_author": "Vladislav Katolyk <v.katolyk@bestdoctor.ru>"
+    }
+  }
+}
