@@ -30,7 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and `**kwargs` annotations were silently skipped.
 - `--max-annotations-len` was ignored: `parse_options` never applied it, so `TAE003`
   always used the built-in default of 7.
-- `TAE003` did not count list-literal subscript slices such as `Foo[[a, b, c]]`.
 
 ### Removed
 
