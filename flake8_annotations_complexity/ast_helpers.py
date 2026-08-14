@@ -1,24 +1,39 @@
 import ast
+from collections.abc import Iterator
 from logging import getLogger
-from typing import List, Tuple, Any
+from typing import Any
 
 logger = getLogger(__name__)
 
 
-def get_annotation_complexity(annotation_node) -> int:
+def _unwrap_annotation(annotation_node: ast.AST) -> ast.AST | None:
+    """
+    Return the node to analyse, parsing string-wrapped annotations along the way.
+
+    Returns ``None`` if a string annotation cannot be parsed.
+    """
+    if not (isinstance(annotation_node, ast.Constant) and isinstance(annotation_node.value, str)):
+        return annotation_node
+    try:
+        return ast.parse(annotation_node.value).body[0].value  # type: ignore[attr-defined]
+    except Exception as exc:
+        # PEP 3107 allows arbitrary expressions in annotations, so a string
+        # annotation is not guaranteed to be parseable at all.
+        logger.debug(f'Cannot parse string-wrapped annotation: {exc!r}')
+        return None
+
+
+def get_annotation_complexity(annotation_node: ast.AST) -> int:
     """
     Recursively counts complexity of annotation nodes.
 
     When annotations are written as strings,
     we additionally parse them to ``ast`` nodes.
     """
-    if isinstance(annotation_node, ast.Str):
-        # try to parse string-wrapped annotations
-        try:
-            annotation_node = ast.parse(annotation_node.s).body[0].value  # type: ignore
-        except Exception as exc:
-            logger.debug(f'Cannot parse string-wrapped annotation: {exc!r}')
-            return 1
+    unwrapped = _unwrap_annotation(annotation_node)
+    if unwrapped is None:
+        return 1
+    annotation_node = unwrapped
 
     if isinstance(annotation_node, ast.Subscript):
         return 1 + get_annotation_complexity(annotation_node.slice)
@@ -29,58 +44,70 @@ def get_annotation_complexity(annotation_node) -> int:
     return 1
 
 
-def get_annotation_len(annotation_node) -> int:
+def get_annotation_len(annotation_node: ast.AST) -> int:
     """
     Recursively counts length of annotation nodes.
 
     When annotations are written as strings,
     we additionally parse them to ``ast`` nodes.
     """
-    if isinstance(annotation_node, ast.Str):
-        # try to parse string-wrapped annotations
-        try:
-            annotation_node = ast.parse(annotation_node.s).body[0].value  # type: ignore
-        except Exception as exc:
-            logger.debug(f'Cannot parse string-wrapped annotation: {exc!r}')
-            return 0
+    unwrapped = _unwrap_annotation(annotation_node)
+    if unwrapped is None:
+        return 0
+    annotation_node = unwrapped
 
-    if isinstance(annotation_node, ast.Subscript):
-        try:
-            return len(annotation_node.slice.elts)  # type: ignore
-        except AttributeError:
-            logger.debug('Attribute error on annotation length counting')
-            return 0
+    if isinstance(annotation_node, ast.Subscript) and isinstance(
+        annotation_node.slice, (ast.Tuple, ast.List)
+    ):
+        return len(annotation_node.slice.elts)
 
     return 0
 
 
-def validate_annotations_in_ast_node(
-    node,
-    max_annotations_complexity,
-    max_annotations_len,
-) -> List[Tuple[Any, str]]:
-    too_difficult_annotations = []
-    func_defs = [
-        f for f in ast.walk(node)
-        if isinstance(f, ast.FunctionDef)
+def _iter_func_annotations(funcdef: ast.FunctionDef | ast.AsyncFunctionDef) -> Iterator[ast.expr]:
+    """Yield every annotation of a function: all argument kinds and the return type."""
+    args = funcdef.args
+    all_args = [
+        *args.posonlyargs,
+        *args.args,
+        *args.kwonlyargs,
+        *(arg for arg in (args.vararg, args.kwarg) if arg is not None),
     ]
-    annotations: List[ast.AST] = []
-    for funcdef in func_defs:
-        annotations += list(filter(None, (a.annotation for a in funcdef.args.args)))
-        if funcdef.returns:
-            annotations.append(funcdef.returns)
-    annotations += [a.annotation for a in ast.walk(node) if isinstance(a, ast.AnnAssign) and a.annotation]
+    for arg in all_args:
+        if arg.annotation:
+            yield arg.annotation
+    if funcdef.returns:
+        yield funcdef.returns
+
+
+def validate_annotations_in_ast_node(
+    node: ast.AST,
+    max_annotations_complexity: int,
+    max_annotations_len: int,
+) -> list[tuple[Any, str]]:
+    too_difficult_annotations = []
+    annotations: list[ast.expr] = []
+    for child in ast.walk(node):
+        if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            annotations += _iter_func_annotations(child)
+        elif isinstance(child, ast.AnnAssign) and child.annotation:
+            annotations.append(child.annotation)
+
     for annotation in annotations:
         complexity = get_annotation_complexity(annotation)
         if complexity > max_annotations_complexity:
-            too_difficult_annotations.append((
-                annotation,
-                'TAE002 too complex annotation ({0} > {1})'.format(complexity, max_annotations_complexity),
-            ))
+            too_difficult_annotations.append(
+                (
+                    annotation,
+                    f'TAE002 too complex annotation ({complexity} > {max_annotations_complexity})',
+                )
+            )
         annotation_len = get_annotation_len(annotation)
         if annotation_len > max_annotations_len:
-            too_difficult_annotations.append((
-                annotation,
-                'TAE003 too long annotation ({0} > {1})'.format(annotation_len, max_annotations_len),
-            ))
+            too_difficult_annotations.append(
+                (
+                    annotation,
+                    f'TAE003 too long annotation ({annotation_len} > {max_annotations_len})',
+                )
+            )
     return too_difficult_annotations

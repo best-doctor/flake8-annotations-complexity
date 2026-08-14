@@ -1,20 +1,41 @@
 import ast
-import os
+from collections.abc import Callable, Iterator
+from pathlib import Path
+
+import pytest
 
 from flake8_annotations_complexity.checker import AnnotationsComplexityChecker
 
+TEST_FILES_DIR = Path(__file__).resolve().parent / 'test_files'
 
-def run_validator_for_test_file(filename, max_annotations_complexity=None):
-    test_file_path = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)),
-        'test_files',
-        filename,
-    )
-    with open(test_file_path, 'r') as file_handler:
-        raw_content = file_handler.read()
-    tree = ast.parse(raw_content)
-    checker = AnnotationsComplexityChecker(tree=tree, filename=filename)
-    if max_annotations_complexity:
-        checker.max_annotations_complexity = max_annotations_complexity
+CheckerErrors = list[tuple[int, int, str, type]]
 
-    return list(checker.run())
+
+@pytest.fixture()
+def run_validator() -> Callable[..., CheckerErrors]:
+    def _run_validator(
+        filename: str,
+        max_annotations_complexity: int | None = None,
+        max_annotations_len: int | None = None,
+    ) -> CheckerErrors:
+        tree = ast.parse((TEST_FILES_DIR / filename).read_text())
+        checker = AnnotationsComplexityChecker(tree=tree, filename=filename)
+        if max_annotations_complexity:
+            checker.max_annotations_complexity = max_annotations_complexity
+        if max_annotations_len:
+            checker.max_annotations_len = max_annotations_len
+
+        return list(checker.run())
+
+    return _run_validator
+
+
+@pytest.fixture()
+def restore_checker_limits() -> Iterator[None]:
+    complexity = AnnotationsComplexityChecker.max_annotations_complexity
+    length = AnnotationsComplexityChecker.max_annotations_len
+
+    yield
+
+    AnnotationsComplexityChecker.max_annotations_complexity = complexity
+    AnnotationsComplexityChecker.max_annotations_len = length

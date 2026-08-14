@@ -1,23 +1,30 @@
+.PHONY: install test coverage types style format readme audit check
+
+install:
+	uv sync
+
 test:
-	python -m pytest
+	uv run pytest
 
 coverage:
-	python -m pytest --cov=flake8_annotations_complexity --cov-report=xml
+	uv run pytest --cov=flake8_annotations_complexity --cov-report=xml --cov-report=term
 
 types:
-	mypy .
+	uv run mypy flake8_annotations_complexity
 
 style:
-	flake8 .
+	uv run ruff check .
+	uv run ruff format --check .
+	uv run flake8 .
+
+format:
+	uv run ruff check --fix .
+	uv run ruff format .
 
 readme:
-	mdl README.md
+	npx --yes markdownlint-cli2 README.md
 
-requirements:
-	safety check -r requirements_dev.txt
+audit:
+	uv run pip-audit
 
-check:
-	make style
-	make types
-	make test
-	make requirements
+check: style types test audit

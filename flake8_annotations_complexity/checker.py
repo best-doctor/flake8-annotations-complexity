@@ -1,4 +1,6 @@
-from typing import Generator, Tuple
+import ast
+from collections.abc import Iterator
+from typing import Any
 
 from flake8_annotations_complexity import __version__ as version
 from flake8_annotations_complexity.ast_helpers import validate_annotations_in_ast_node
@@ -8,22 +10,19 @@ class AnnotationsComplexityChecker:
     name = 'flake8-annotations-complexity'
     version = version
 
-    max_annotations_complexity = None
     default_max_annotations_complexity = 3
-
-    max_annotations_len = None
     default_max_annotations_len = 7
 
-    def __init__(self, tree, filename: str):
+    # Overwritten by ``parse_options`` when flake8 drives the checker.
+    max_annotations_complexity: int = default_max_annotations_complexity
+    max_annotations_len: int = default_max_annotations_len
+
+    def __init__(self, tree: ast.AST, filename: str) -> None:
         self.filename = filename
         self.tree = tree
-        if AnnotationsComplexityChecker.max_annotations_complexity is None:
-            AnnotationsComplexityChecker.max_annotations_complexity = self.default_max_annotations_complexity
-        if AnnotationsComplexityChecker.max_annotations_len is None:
-            AnnotationsComplexityChecker.max_annotations_len = self.default_max_annotations_len
 
     @classmethod
-    def add_options(cls, parser) -> None:
+    def add_options(cls, parser: Any) -> None:
         parser.add_option(
             '--max-annotations-complexity',
             type=int,
@@ -38,10 +37,11 @@ class AnnotationsComplexityChecker:
         )
 
     @classmethod
-    def parse_options(cls, options) -> None:
+    def parse_options(cls, options: Any) -> None:
         cls.max_annotations_complexity = int(options.max_annotations_complexity)
+        cls.max_annotations_len = int(options.max_annotations_len)
 
-    def run(self) -> Generator[Tuple[int, int, str, type], None, None]:
+    def run(self) -> Iterator[tuple[int, int, str, type]]:
         too_difficult_annotations = validate_annotations_in_ast_node(
             self.tree,
             self.max_annotations_complexity,

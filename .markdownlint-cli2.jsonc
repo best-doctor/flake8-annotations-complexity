@@ -1,0 +1,10 @@
+{
+  "config": {
+    "default": true,
+    "MD013": { "line_length": 120 },
+    // A changelog repeats "Added"/"Fixed" under every release heading.
+    "MD024": { "siblings_only": true }
+  },
+  "globs": ["**/*.md"],
+  "ignores": ["venv/**", ".venv/**", "node_modules/**"]
+}

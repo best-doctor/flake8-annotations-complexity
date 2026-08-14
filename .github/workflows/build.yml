@@ -2,29 +2,55 @@ name: Lint and test code
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install uv
+        uses: astral-sh/setup-uv@v10
+        with:
+          python-version: '3.10'
+          enable-cache: true
+      - name: Install dependencies
+        run: uv sync --frozen
+      - name: Run ruff
+        run: |
+          uv run ruff check --output-format=github .
+          uv run ruff format --check .
+      - name: Run flake8 (dogfood this plugin)
+        run: uv run flake8 .
+      - name: Run mypy
+        run: uv run mypy flake8_annotations_complexity
+      - name: Audit dependencies
+        run: uv run pip-audit
+      - name: Run markdownlint
+        uses: DavidAnson/markdownlint-cli2-action@v24
+        with:
+          globs: '**/*.md'
+
+  test:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ['3.9', '3.10', '3.11']
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v7
+      - name: Install uv and set up Python ${{ matrix.python-version }}
+        uses: astral-sh/setup-uv@v10
         with:
           python-version: ${{ matrix.python-version }}
+          enable-cache: true
       - name: Install dependencies
-        run: pip install -r requirements_dev.txt
-      - name: Run mdl
-        uses: actionshub/markdownlint@main
-      - name: Run checks
-        run: make style types requirements
-      - name: Run tests and publish coverage
-        uses: paambaati/codeclimate-action@v2.7.5
-        env:
-          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        with:
-          coverageCommand: make coverage
+        run: uv sync --frozen
+      - name: Run tests
+        run: uv run pytest --cov=flake8_annotations_complexity --cov-report=term
